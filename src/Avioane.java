@@ -92,7 +92,7 @@ public class Avioane {
     }
     // }
 
-
+/*
     public Move setPlane() {
         int linia = (int) Math.round(Math.random() * 2);
         int coloana = (int) Math.round(Math.random() * 2);
@@ -100,7 +100,7 @@ public class Avioane {
         System.out.println(linia + "-" + coloana);
         Move pozitieAvion = new Move(linia, coloana);
         return pozitieAvion;
-    }
+    }*/
 
     public void makeMove(Move move, char symbol) {
         game[move.getLine()][move.getColumn()] = symbol;
@@ -162,17 +162,16 @@ public class Avioane {
                             arataAvion_oMutare(plane.avion[i], SIMBOL_AVARIAT);
                         }
                     }
-                    //daca nimeresc head-ul
 
-
+                }
                     //afisez doar cand am terminat de iterat prin array-ul meu cu mutari
-                    if (esteAvariat==false && i == 0) {
+                    if (esteAvariat==false) {
                         System.out.println("Soo close! Try again!");
                         //inregisterz mutarea in marice
                         makeMove(move, SIMBOL_X);
                         showGame();
                     }
-                }
+
                 esteAvariat = false;
 
 
