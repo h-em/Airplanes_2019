@@ -1,5 +1,6 @@
 import java.sql.SQLOutput;
 import java.util.Scanner;
+import java.util.Random;
 
 public class Avioane {
 
@@ -55,10 +56,38 @@ public class Avioane {
         return mutare;
     }
 
+    public void makeMove(Move move, char symbol) {
+        game[move.getLine()][move.getColumn()] = symbol;
+    }
+
+    public void arataAvionComplet(Plane plane, char simbol) {
+        for (int i = 0; i < plane.avion.length; i++) {
+            makeMove(plane.avion[i], simbol);
+        }
+        showGame();
+    }
+
+    public void arataAvion_oMutare(Move move, char simbol) {
+        makeMove(move, simbol);
+        showGame();
+    }
+
+    public boolean mutareValida(Move move) {
+        return move.getLine() >= 0 && move.getLine() < GAME_SIZE
+                && move.getColumn() >= 0 && move.getColumn() < GAME_SIZE
+                && game[move.getLine()][move.getColumn()] == '*';
+    }
+
+    public boolean avionDistrus(Plane plane, Move move) {
+        return move.getLine() == plane.head.getLine() && move.getColumn() == plane.head.getColumn();
+    }
+
+    public boolean avionAvariat(Plane plane, Move move, int i) {
+        return plane.avion[i].getLine() == move.getLine() && plane.avion[i].getColumn() == move.getColumn();
+    }
+
 
     public Plane locatieAvion() {
-
-
         Move[] move = {
                 //coada
                 new Move(1, 0),
@@ -78,25 +107,78 @@ public class Avioane {
 
         //in obiectul de tip Move retin linia si colana unde se afla capul avionului
         Move head = new Move(2, 3);
+        return new Plane(move, head);
+    }
+
+
+    public Plane generateRandomPlanePositionUpp() {
+
+        //generez random linia si coloana
+        //verific ca locatia capului sa permita construirea unui avion intreg
+        //random pt linie - valori intre 0 si 6(inclusiv)
+        int line = 0 + (int) (Math.random() * ((6 - 0) + 1));
+        //random pt coloana - valori intre 2 si 7(inclusiv)
+        int column = 2 + (int) (Math.random() * ((7 - 2) + 1));
+        //salvez pozitia capului
+        Move head = new Move(line, column);
+        //construiesc avionul in functie de pozitia capului
+        Move[] move = {
+
+                //cap
+                new Move(line, column),
+                //corp avion
+                new Move(line + 1, column),
+                new Move(line + 2, column),
+                new Move(line + 3, column),
+                //aripa stanga
+                new Move(line + 1, column - 1),
+                new Move(line + 1, column - 2),
+                //aripa dreapta
+                new Move(line + 1, column + 1),
+                new Move(line + 1, column + 2),
+                //coada stanga
+                new Move(line + 3, column - 1),
+                //coada dreapta
+                new Move(line + 3, column + 1)
+        };
 
         return new Plane(move, head);
     }
 
 
-    public void makeMove(Move move, char symbol) {
-        game[move.getLine()][move.getColumn()] = symbol;
-    }
+    public Plane generateRandomPlanePositionDown() {
 
-    public void arataAvionComplet(Plane plane, char simbol) {
-        for (int i = 0; i < plane.avion.length; i++) {
-            makeMove(plane.avion[i], simbol);
-        }
-        showGame();
-    }
+        //generez random linia si coloana
+        //verific ca locatia capului sa permita construirea unui avion intreg
+        //random pt linie - valori intre 3 si 9(inclusiv)
+        int line = 3 + (int) (Math.random() * ((9 - 3) + 1));
 
-    public void arataAvion_oMutare(Move move, char simbol) {
-        makeMove(move, simbol);
-        showGame();
+        //random pt coloana - valori intre 2 si 7(inclusiv)
+        int column = 2 + (int) (Math.random() * ((7 - 2) + 1));
+        //salvez pozitia capului
+        Move head = new Move(line, column);
+        //construiesc avionul in functie de pozitia capului
+        Move[] move = {
+
+                //cap
+                new Move(line, column),
+                //corp avion
+                new Move(line - 1, column),
+                new Move(line - 2, column),
+                new Move(line - 3, column),
+                //aripa stanga
+                new Move(line - 1, column - 1),
+                new Move(line - 1, column - 2),
+                //aripa dreapta
+                new Move(line - 1, column + 1),
+                new Move(line - 1, column + 2),
+                //coada stanga
+                new Move(line - 3, column - 1),
+                //coada dreapta
+                new Move(line - 3, column + 1)
+        };
+
+        return new Plane(move, head);
     }
 
 
@@ -104,29 +186,32 @@ public class Avioane {
         initBoard();
         System.out.println("Incepe jocul.");
         showGame();
-        Plane plane = locatieAvion();
+        Plane plane = generateRandomPlanePositionDown();
         boolean esteAvariat = false;
         //Player currentPlayer = player1;
-        //char currentSymbol = SIMBOL_X;
-
+        boolean mutareValida;
+        boolean avionDistrus;
+        boolean avionAvarit;
         boolean isWin = false;
         while (!isWin) {
-
+            System.out.println(plane.head.getLine() + "-" + plane.head.getColumn());
             //citesc mutare
             System.out.print("Player " + player1.getName() + "(" + SIMBOL_X + ")");
             Move move = readMove();
-            //validez mutarea
-            if (move.getLine() >= 0 && move.getLine() < GAME_SIZE
-                    && move.getColumn() >= 0 && move.getColumn() < GAME_SIZE
-                    && game[move.getLine()][move.getColumn()] == '*') {
 
+            mutareValida = mutareValida(move);
+            //validez mutarea
+            if (mutareValida) {
                 //iterez prin vectorul de mutari
                 for (int i = 0; i < plane.avion.length; i++) {
 
+                    avionAvarit = avionAvariat(plane, move, i);
                     //daca nimeresc o parte din avion
-                    if (plane.avion[i].getLine() == move.getLine() && plane.avion[i].getColumn() == move.getColumn()) {
+                    if (avionAvarit) {
+
+                        avionDistrus = avionDistrus(plane, move);
                         //daca nimeresc head-ul  avionul este distrus
-                        if ((move.getLine() == plane.head.getLine() && move.getColumn() == plane.head.getColumn())) {
+                        if (avionDistrus) {
                             System.out.println("Avionul a fost distrus!");
                             //modific matricea si arat avionul complet distrus
                             arataAvionComplet(plane, SIMBOL_O); //arataAvion(plane.avion[i], SIMBOL_A);
@@ -141,7 +226,6 @@ public class Avioane {
                             arataAvion_oMutare(plane.avion[i], SIMBOL_AVARIAT);
                         }
                     }
-
                 }
                 //daca nu am nimerit avionul
                 if (esteAvariat == false) {
