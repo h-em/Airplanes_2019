@@ -31,8 +31,7 @@ public class Avioane {
         int index = 0;
         System.out.print("  ");
         for (int k = 0; k < GAME_SIZE - 1; k++) {
-            System.out.print(index + " ");
-            index++;
+            System.out.print(k + " ");
         }
 
         System.out.print(index + "\n");
@@ -87,114 +86,104 @@ public class Avioane {
     }
 
 
-    public Plane locatieAvion() {
-        Move[] move = {
-                //coada
-                new Move(1, 0),
-                new Move(2, 0),
-                new Move(3, 0),
-                //legatura intre coada si aripile din fata
-                new Move(2, 1),
-                //aripi fata
-                new Move(0, 2),
-                new Move(1, 2),
-                new Move(2, 2),
-                new Move(3, 2),
-                new Move(4, 2),
-                //cap
-                new Move(2, 3)
-        };
+    // public Plane generateRandomPlanePositionUpp() {
+    public Plane generateRandomPlanePosition(String optiune) {
+        Move[] moves = null;
+        Move head = null;
+        int line,column;
+        switch (optiune) {
+            case "upp":
+                //generez random linia si coloana
+                //verific ca locatia capului sa permita construirea unui avion intreg
+                //random pt linie - valori intre 0 si 6(inclusiv)
+                 line = 0 + (int) (Math.random() * ((6 - 0) + 1));
+                //random pt coloana - valori intre 2 si 7(inclusiv)
+                 column = 2 + (int) (Math.random() * ((7 - 2) + 1));
+                //salvez pozitia capului
+                head = new Move(line, column);
+                //construiesc avionul in functie de pozitia capului
+                Move[] upMoves = {
 
-        //in obiectul de tip Move retin linia si colana unde se afla capul avionului
-        Move head = new Move(2, 3);
-        return new Plane(move, head);
+                        //cap
+                        new Move(line, column),
+                        //corp avion
+                        new Move(line + 1, column),
+                        new Move(line + 2, column),
+                        new Move(line + 3, column),
+                        //aripa stanga
+                        new Move(line + 1, column - 1),
+                        new Move(line + 1, column - 2),
+                        //aripa dreapta
+                        new Move(line + 1, column + 1),
+                        new Move(line + 1, column + 2),
+                        //coada stanga
+                        new Move(line + 3, column - 1),
+                        //coada dreapta
+                        new Move(line + 3, column + 1)
+                };
+                moves = upMoves;
+                break;
+
+            case "down":
+                //generez random linia si coloana
+                //verific ca locatia capului sa permita construirea unui avion intreg
+                //random pt linie - valori intre 3 si 9(inclusiv)
+                 line = 3 + (int) (Math.random() * ((9 - 3) + 1));
+                //random pt coloana - valori intre 2 si 7(inclusiv)
+                 column = 2 + (int) (Math.random() * ((7 - 2) + 1));
+                //salvez pozitia capului
+                 head = new Move(line, column);
+                //construiesc avionul in functie de pozitia capului
+                Move[] downMoves = {
+
+                        //cap
+                        new Move(line, column),
+                        //corp avion
+                        new Move(line - 1, column),
+                        new Move(line - 2, column),
+                        new Move(line - 3, column),
+                        //aripa stanga
+                        new Move(line - 1, column - 1),
+                        new Move(line - 1, column - 2),
+                        //aripa dreapta
+                        new Move(line - 1, column + 1),
+                        new Move(line - 1, column + 2),
+                        //coada stanga
+                        new Move(line - 3, column - 1),
+                        //coada dreapta
+                        new Move(line - 3, column + 1)
+                };
+                moves = downMoves;
+                break;
+
+            case "left":
+                break;
+            case "right":
+                break;
+            default:
+                System.out.println("Opriunea nu este valida incercati din nou");
+        }
+
+        return new Plane(moves, head);
     }
 
-
-    public Plane generateRandomPlanePositionUpp() {
-
-        //generez random linia si coloana
-        //verific ca locatia capului sa permita construirea unui avion intreg
-        //random pt linie - valori intre 0 si 6(inclusiv)
-        int line = 0 + (int) (Math.random() * ((6 - 0) + 1));
-        //random pt coloana - valori intre 2 si 7(inclusiv)
-        int column = 2 + (int) (Math.random() * ((7 - 2) + 1));
-        //salvez pozitia capului
-        Move head = new Move(line, column);
-        //construiesc avionul in functie de pozitia capului
-        Move[] move = {
-
-                //cap
-                new Move(line, column),
-                //corp avion
-                new Move(line + 1, column),
-                new Move(line + 2, column),
-                new Move(line + 3, column),
-                //aripa stanga
-                new Move(line + 1, column - 1),
-                new Move(line + 1, column - 2),
-                //aripa dreapta
-                new Move(line + 1, column + 1),
-                new Move(line + 1, column + 2),
-                //coada stanga
-                new Move(line + 3, column - 1),
-                //coada dreapta
-                new Move(line + 3, column + 1)
-        };
-
-        return new Plane(move, head);
-    }
-
-
-    public Plane generateRandomPlanePositionDown() {
-
-        //generez random linia si coloana
-        //verific ca locatia capului sa permita construirea unui avion intreg
-        //random pt linie - valori intre 3 si 9(inclusiv)
-        int line = 3 + (int) (Math.random() * ((9 - 3) + 1));
-
-        //random pt coloana - valori intre 2 si 7(inclusiv)
-        int column = 2 + (int) (Math.random() * ((7 - 2) + 1));
-        //salvez pozitia capului
-        Move head = new Move(line, column);
-        //construiesc avionul in functie de pozitia capului
-        Move[] move = {
-
-                //cap
-                new Move(line, column),
-                //corp avion
-                new Move(line - 1, column),
-                new Move(line - 2, column),
-                new Move(line - 3, column),
-                //aripa stanga
-                new Move(line - 1, column - 1),
-                new Move(line - 1, column - 2),
-                //aripa dreapta
-                new Move(line - 1, column + 1),
-                new Move(line - 1, column + 2),
-                //coada stanga
-                new Move(line - 3, column - 1),
-                //coada dreapta
-                new Move(line - 3, column + 1)
-        };
-
-        return new Plane(move, head);
-    }
 
 
     public void playGame() {
-        initBoard();
-        System.out.println("Incepe jocul.");
-        showGame();
-        Plane plane = generateRandomPlanePositionDown();
+
         boolean esteAvariat = false;
-        //Player currentPlayer = player1;
         boolean mutareValida;
         boolean avionDistrus;
         boolean avionAvarit;
         boolean isWin = false;
+
+        initBoard();
+        System.out.println("Incepe jocul.");
+        showGame();
+        Plane plane = generateRandomPlanePosition("down");
+
         while (!isWin) {
-            System.out.println(plane.head.getLine() + "-" + plane.head.getColumn());
+            System.out.println("head-ul este" + plane.head.getLine() + "-" + plane.head.getColumn());
             //citesc mutare
             System.out.print("Player " + player1.getName() + "(" + SIMBOL_X + ")");
             Move move = readMove();
